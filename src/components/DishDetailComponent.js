@@ -15,7 +15,7 @@ function RenderComments({comments}) {
             );
         });
         return(
-            <div className="col-12 col-md-7 mt-5">
+            <div className="col-12 col-md-7 mt-3 mb-3">
                 <h4>Comments</h4>
                 <ul className="list-unstyled">
                     {list}
@@ -29,7 +29,7 @@ function RenderComments({comments}) {
 
 function RenderDish({dish}) {
     return(
-        <div className="col-12 col-md-5 mt-5">
+        <div className="col-12 col-md-5 mt-3 mb-3">
             <Card>
                 <CardImg top width="100%" object src={dish.image} alt={dish.name}></CardImg>
                 <CardBody>

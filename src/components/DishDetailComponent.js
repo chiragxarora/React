@@ -1,6 +1,97 @@
-import React from 'react';
-import { Card, CardImg, CardImgOverlay, CardBody, CardText, CardTitle, Breadcrumb, BreadcrumbItem } from 'reactstrap';
+import React, { useState, Component } from 'react';
+import { Card, CardImg, CardImgOverlay, CardBody, CardText, CardTitle, Breadcrumb, BreadcrumbItem, Button, Modal, ModalHeader, ModalBody, Row, Label } from 'reactstrap';
 import { Link } from 'react-router-dom';
+import { LocalForm, Control, Errors } from 'react-redux-form';
+
+const required = (val) => val && val.length ;
+const maxLength = (len) => (val) => !(val) || (val.length <= len) ;
+const minLength = (len) => (val) => (val) && (val.length >= len) ;
+
+class CommentForm extends Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            isModalOpen: false
+        }
+        this.toggleModal = this.toggleModal.bind(this);
+        this.handleSubmit = this.handleSubmit.bind(this);
+    }
+
+    handleSubmit(values) {
+        this.toggleModal();
+        console.log("Current state is "+ JSON.stringify(values));
+        alert("Current state is "+ JSON.stringify(values));
+    }
+
+    toggleModal() {
+        this.setState({
+            isModalOpen: !this.state.isModalOpen
+        })
+    }
+
+    render() {
+        return(
+            <div>
+                <Button onClick={this.toggleModal} outline color="secondary"><span className="fa fa-pencil"></span> Submit Comment</Button>
+                <Modal isOpen={this.state.isModalOpen} toggle={this.toggleModal}>
+                    <ModalHeader toggle={this.toggleModal}>
+                        Submit Comment
+                    </ModalHeader>
+                    <ModalBody className="ml-3 mr-3 ">
+                        <LocalForm onSubmit={(values) => this.handleSubmit(values)}>
+                            <Row className="form-group">
+                                <Label>Rating</Label>
+                                <Control.select className="form-control" model=".rating" name="rating">
+                                    <option>1</option>
+                                    <option>2</option>
+                                    <option>3</option>
+                                    <option>4</option>
+                                    <option>5</option>
+                                </Control.select>
+                            </Row>
+                            <Row className="form-group">
+                                <Label>Your Name</Label>
+                                <Control.text model=".author" name="author" id="author" className="form-control"
+                                    validators={{required, minLength: minLength(3), maxLength: maxLength(15)}}
+                                />
+                                <Errors className="text-danger" model=".author" show="touched"
+                                    messages={{
+                                        required: 'Required | ',
+                                        minLength: 'Must be greater than 2 characters',
+                                        maxLength: 'Must be 15 characters or less'
+                                    }}
+                                />
+                            </Row>
+                            <Row className="form-group">
+                                <Control.textarea model=".comment" name="comment" id="comment" rows="6" className="form-control">
+
+                                </Control.textarea>
+                            </Row>
+                            <Row className="form-group">                                 
+                                <Button type="submit" color="primary">Submit</Button>
+                             </Row>
+
+                        </LocalForm>
+                    </ModalBody>
+                </Modal>
+            </div>
+        );
+    }
+}
+
+function RenderDish({dish}) {
+    return(
+        <div className="col-12 col-md-5 mt-3 mb-3">
+            <Card>
+                <CardImg top width="100%" object src={dish.image} alt={dish.name}></CardImg>
+                <CardBody>
+                    <CardTitle >{dish.name}</CardTitle>
+                    <CardText>{dish.description}</CardText>
+                </CardBody>
+            </Card>    
+        </div>    
+    )
+}
 
 function RenderComments({comments}) {
     if(comments!=null){
@@ -21,28 +112,17 @@ function RenderComments({comments}) {
                 <ul className="list-unstyled">
                     {list}
                 </ul>
+                <CommentForm />
             </div>
         );
     }else{
         return (<div></div>);
     }  
-}
+}    
 
-function RenderDish({dish}) {
-    return(
-        <div className="col-12 col-md-5 mt-3 mb-3">
-            <Card>
-                <CardImg top width="100%" object src={dish.image} alt={dish.name}></CardImg>
-                <CardBody>
-                    <CardTitle >{dish.name}</CardTitle>
-                    <CardText>{dish.description}</CardText>
-                </CardBody>
-            </Card>    
-        </div>    
-    )
-}
 
 const DishDetail = (props) => {
+    
     if(props.dish!=undefined){
         return(
             <div className="container">
@@ -56,7 +136,9 @@ const DishDetail = (props) => {
                     </div>
                     <RenderDish dish = {props.dish} />
                     <RenderComments comments = {props.comments} />
+                    
                 </div>
+                
              </div>
         )
     }else{
@@ -64,4 +146,4 @@ const DishDetail = (props) => {
     }
 }
 
-export default DishDetail;
+export default DishDetail; 

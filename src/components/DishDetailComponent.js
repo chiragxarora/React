@@ -2,6 +2,8 @@ import React, { useState, Component } from 'react';
 import { Card, CardImg, CardImgOverlay, CardBody, CardText, CardTitle, Breadcrumb, BreadcrumbItem, Button, Modal, ModalHeader, ModalBody, Row, Label } from 'reactstrap';
 import { Link } from 'react-router-dom';
 import { LocalForm, Control, Errors } from 'react-redux-form';
+import { Loading } from './LoadingComponent';
+import { baseUrl } from '../shared/baseUrl';
 
 const required = (val) => val && val.length ;
 const maxLength = (len) => (val) => !(val) || (val.length <= len) ;
@@ -82,7 +84,7 @@ function RenderDish({dish}) {
     return(
         <div className="col-12 col-md-5 mt-3 mb-3">
             <Card>
-                <CardImg top width="100%" object src={dish.image} alt={dish.name}></CardImg>
+                <CardImg top width="100%" object src={baseUrl + dish.image} alt={dish.name}></CardImg>
                 <CardBody>
                     <CardTitle >{dish.name}</CardTitle>
                     <CardText>{dish.description}</CardText>
@@ -121,8 +123,25 @@ function RenderComments({comments, addComment, dishId}) {
 
 
 const DishDetail = (props) => {
-    
-    if(props.dish!=undefined){
+
+    if (props.isLoading) {
+        return(
+            <div className="container">
+                <div className="row">            
+                    <Loading />
+                </div>
+            </div>
+        );
+    }
+    else if (props.errMess) {
+        return(
+            <div className="container">
+                <div className="row">            
+                    <h4>{props.errMess}</h4>
+                </div>
+            </div>
+        );
+    }else if (props.dish!=undefined){
         return(
             <div className="container">
                 <div className="row">

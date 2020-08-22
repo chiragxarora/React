@@ -1,29 +1,37 @@
 import React from 'react';
 import { Breadcrumb, BreadcrumbItem, Card, CardBody, CardHeader, Media } from 'reactstrap';
 import { Link } from 'react-router-dom';
+import { baseUrl } from '../shared/baseUrl';
+import { Loading } from './LoadingComponent';
+import { Fade, Stagger } from 'react-animation-components'
 
 function RenderLeader ({leader}) {
+
     return(
         <div key = {leader.id}>
-            <Media tag = "li">
-                <Media left middle className="mr-5">
-                    <Media object src={leader.image} alt={leader.name} />
+            <Fade in>
+                <Media tag = "li">
+                    <Media left middle className="mr-5">
+                        <Media object src={baseUrl + leader.image} alt={leader.name} />
+                    </Media>
+                    <Media body>
+                        <Media heading>{leader.name}</Media>
+                        <Media>{leader.designation}</Media>
+                        <br/>
+                        <p>{leader.description}</p>
+                    </Media>
                 </Media>
-                <Media body>
-                    <Media heading>{leader.name}</Media>
-                    <Media>{leader.designation}</Media>
-                    <br/>
-                    <p>{leader.description}</p>
-                </Media>
-            </Media>
+            </Fade>
             <br/>
         </div>
+        
+        
+        
     )
 }
 
-function About(props) {
-
-    const leaders = props.leaders.map((leader) => {
+function LeaderList (props) {
+    const leaders = props.ls.leaders.map((leader) => {
         return (
             <Media list>
                 <RenderLeader leader = {leader} />
@@ -31,6 +39,33 @@ function About(props) {
         );
     });
 
+    if(props.ls.isLoading) {
+        return (
+            <div className="container">
+                <div className="row">
+                    <Loading />
+                </div>
+            </div>
+        )
+    }
+    else if(props.ls.errMess) {
+        return(
+            <div className="container">
+            <div className="row">
+                <h4>{props.ls.errMess}</h4>
+            </div>
+        </div>
+        )
+    }else {
+        return(
+            <Media list>
+                {leaders}
+            </Media>
+        )
+    }
+}
+
+function About(props) {
     return(
         <div className="container">
             <div className="row">
@@ -87,10 +122,9 @@ function About(props) {
                     <br/>    
                 </div>
                 <div className="col-12">
-                    <Media list>
-                        {leaders}
-                    </Media>
+                    
                 </div>
+                <LeaderList ls = {props.leaders} />
             </div>
         </div>
     );
